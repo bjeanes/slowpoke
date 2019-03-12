@@ -11,12 +11,16 @@ module Slowpoke
   SIGNAL = "QUIT".freeze
 
   def self.timeout
-    @timeout ||= (ENV["REQUEST_TIMEOUT"] || ENV["TIMEOUT"] || 15).to_i
+    @timeout ||= (
+      ENV["RACK_TIMEOUT_SERVICE_TIMEOUT"] ||
+      ENV["REQUEST_TIMEOUT"] ||
+      ENV["TIMEOUT"] ||
+      15
+    ).to_i
   end
 
   def self.timeout=(timeout)
-    timeout = timeout.to_i if timeout.respond_to?(:to_i)
-    @timeout = Rack::Timeout.service_timeout = timeout
+    @timeout = timeout.to_i if timeout.respond_to?(:to_i)
   end
 
   def self.signal
